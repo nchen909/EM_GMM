@@ -2,10 +2,11 @@ import pandas as pd
 from models import EM
 from utils import learn_params
 from matplotlib import pyplot as plt
-
+import configs
+import os
 if __name__ == '__main__':
     # Read unlabelled data
-    data_unlabeled = pd.read_csv("data/unlabeled.csv")
+    data_unlabeled = pd.read_csv(os.path.join(configs.data_dir,"unlabeled.csv"))
     x_unlabeled = data_unlabeled[["x1", "x2"]].values
 
 
@@ -22,7 +23,7 @@ if __name__ == '__main__':
 
 
     # Read labelled data
-    data_labeled = pd.read_csv("data/labeled.csv")
+    data_labeled = pd.read_csv(os.path.join(configs.data_dir,"labeled.csv"))
     x_labeled = data_labeled[["x1", "x2"]].values
     y_labeled = data_labeled["y"].values
     

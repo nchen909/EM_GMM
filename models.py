@@ -2,7 +2,7 @@ import numpy as np
 from scipy import stats
 from sklearn.mixture import GaussianMixture
 from utils import get_random_psd
-
+import configs
 class GMM2d():
     def __init__(self, params={}):
         self.n_components = 2
