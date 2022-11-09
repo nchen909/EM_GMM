@@ -16,10 +16,9 @@ class GMM2d():
               'sigma1': get_random_psd(self.n_components)}
         return params
     
-    def get_log_pdf(self,x):
-        return np.log([1-self.params["phi"], self.params["phi"]])[np.newaxis, ...] + \
-            np.log([stats.multivariate_normal(self.params["mu0"], self.params["sigma0"]).pdf(x),
-            stats.multivariate_normal(self.params["mu1"], self.params["sigma1"]).pdf(x)]).T
+    def get_pdf(self,x):
+        return np.array( [(1-self.params["phi"])*(stats.multivariate_normal(self.params["mu0"], self.params["sigma0"]).pdf(x)),\
+            (self.params["phi"])*(stats.multivariate_normal(self.params["mu1"], self.params["sigma1"]).pdf(x))]).T
     
     def GMM_sklearn(self,x):
         model = GaussianMixture(n_components=2,

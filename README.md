@@ -14,7 +14,7 @@
 
 在前面提到的示例中，我们有 2 个集群（cluster）：**喜欢新产品的人和不喜欢新产品的人**。如果我们知道每个客户属于**哪个集群（标签）**，我们可以轻松估计**集群的参数（均值和方差）**，或者如果我们知道两个集群的参数，我们可以预测标签。不幸的是，我们都不知道其中任何一个。为了解决这个先有鸡还是先有蛋的问题，便需要使用期望最大化算法 (EM) 。
 
-EM是在存在隐变量时寻找最大似然的迭代算法。该算法**在期望(E)步和最大化(M)步之间迭代**，前者使用参数的当前估计创建后验分布和对数似然的启发式（**估计样本的标签分布**），后者通过从E步最大化似然后验期望，**获得新一轮参数先验**，然后在接下来的E步中使用M步的参数估计。
+EM是在存在隐变量时寻找最大似然的迭代算法。该算法**在期望(E)步和最大化(M)步之间迭代**，前者使用参数的当前估计创建后验分布和对数似然（**估计样本的标签分布**），后者通过从E步最大化似然后验期望，**获得新一轮参数先验**，然后在接下来的E步中使用M步的参数估计。
 
 ![1667720073393](https://pic.mathskiller909.com/img/20221106160423.png?x-oss-process=style/nchen909)
 
@@ -63,11 +63,11 @@ def initialize_random_params():
 
 #### E步
 
-将初始化的参数传递给`e_step()`并计算每个数据点的启发式*Q(y=1|x) 和 Q(y=0|x)*以及我们将在 M 步中最大化的平均对数似然。（之所以成为启发式，是因为它们是用猜测的参数 θ 计算的。）
+将初始化的参数传递给 `e_step()`并计算每个数据点的Q: `Q(y=1|x) 和 Q(y=0|x)`以及我们将在 M 步中最大化的平均对数似然。（Q由猜测的参数 θ 计算。）
 
 ![img](https://pic.mathskiller909.com/img/20221107170843.png?x-oss-process=style/nchen909)
 
-根据上述步骤完成`e_step()`过程。
+根据上述步骤完成 `e_step()`过程。
 
 ```python
 def e_step(x):
@@ -80,7 +80,7 @@ def e_step(x):
 
 #### M步
 
-在`m_step()`中，最大化似然期望，更新参数并获得新一轮参数先验。对于一般分布的EM，由于下式第三部计算复杂度为NP-hard，为将求和移出log，需要用Jensen不等式进行放缩。最后，如果后验期望的argmax没有封闭形式的解决方案，将需要使用梯度上升来解决优化问题并找到参数估计值。
+在 `m_step()`中，最大化似然期望，更新参数并获得新一轮参数先验。对于一般分布的EM，由于下式第三部计算复杂度为NP-hard，为将求和移出log，需要用Jensen不等式进行放缩。最后，如果后验期望的argmax没有封闭形式的解决方案，将需要使用梯度上升来解决优化问题并找到参数估计值。
 
 ![image-20221107180954352](https://pic.mathskiller909.com/img/20221107180954.png?x-oss-process=style/nchen909)
 
@@ -88,7 +88,7 @@ def e_step(x):
 
 ![image-20221107181132138](https://pic.mathskiller909.com/img/20221107181132.png?x-oss-process=style/nchen909)
 
-使用闭式解法完成`m_step()`。
+使用闭式解法完成 `m_step()`。
 
 ```python
 def m_step(x):
@@ -100,11 +100,11 @@ def m_step(x):
     return params
 ```
 
-####  迭代更新
+#### 迭代更新
 
-在 E 步的下一次迭代中使用这些更新的参数，获得新的启发式并运行 M 步。EM 算法所做的是重复运行以上步骤直至平均对数似然收敛。
+在 E 步的下一次迭代中使用这些更新的参数，获得新的Q并运行 M 步。EM 算法所做的是重复运行以上步骤直至平均对数似然收敛。
 
-使用`e_step()`、`m_step()`函数完成`run_em()`并获得预测标签、后验概率和对数似然。
+使用 `e_step()`、`m_step()`函数完成 `run_em()`并获得预测标签、后验概率和对数似然。
 
 ```python
 def run_em(x):
@@ -117,7 +117,7 @@ def run_em(x):
 
 #### 输出标签、可视化
 
-通过`run_em()`得到的预测标签、后验概率和对数似然，输出对每个用户的预测标签。也可以探索似然收敛过程，迭代过程的分布图，最终收敛的效果等（加分项），示例效果如下。
+通过 `run_em()`得到的预测标签、后验概率和对数似然，输出对每个用户的预测标签。也可以探索似然收敛过程，迭代过程的分布图，最终收敛的效果等（加分项），示例效果如下。
 
 ![image-20221106172033170](https://pic.mathskiller909.com/img/20221106172213.png?x-oss-process=style/nchen909)
 
@@ -126,7 +126,6 @@ def run_em(x):
 ![image-20221106172613671](https://pic.mathskiller909.com/img/20221106172613.png?x-oss-process=style/nchen909)
 
 ![image-20221106171924439](https://pic.mathskiller909.com/img/20221106171924.png?x-oss-process=style/nchen909)
-
 
 ```python
 em_unsupervised = EM()
@@ -138,7 +137,6 @@ pass
 
 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 ```
-
 
 ### 半监督GMM
 
@@ -162,7 +160,7 @@ y_labeled = data_labeled["y"].values
 
 ![image-20221107193205943](https://pic.mathskiller909.com/img/20221107193206.png?x-oss-process=style/nchen909)
 
-在`learn_params()`中实现从标记数据中学习初始参数。这些学习到的参数将在第一个 E 步骤中使用。
+在 `learn_params()`中实现从标记数据中学习初始参数。这些学习到的参数将在第一个 E 步骤中使用。
 
 ```python
 def learn_params(x_labeled, y_labeled):
@@ -226,4 +224,3 @@ print("\n%s%% of forecasts matched." % (output_df[output_df["semisupervised_fore
 4. 撰写实验报告（pdf格式提交）
 5. 不可互相抄袭
 6. 将代码与运行结果、实验报告打包提交至 https://workspace.jianguoyun.com/inbox/collect/2d69cd0085884fd4923ee54b7195a6cd/submit
-
